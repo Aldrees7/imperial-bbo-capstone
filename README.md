@@ -45,11 +45,23 @@ Examples included:
 | Function 7 | 2.561618942565491 | 13 |
 | Function 8 | 9.9971608560546 | 13 |
 
-The strongest performance occurred in the final stages of the project.
+The strongest performance occurred during the final stages of the project.
 
 Round 12 produced new best results for six of the eight functions. Round 13 produced new best results for five functions.
 
 These results supported the shift from a general Bayesian optimisation strategy toward smaller, function-specific and evidence-driven searches.
+
+## Key observations
+
+Function 2 demonstrated extremely sharp local behaviour. Moving one coordinate by only `0.000001` improved the result substantially in Round 12, while another move of the same size in the same direction produced a much worse result in Round 13.
+
+Function 5 became almost one-dimensional during late-stage optimisation. Three coordinates remained close to the upper boundary while most refinement focused on the second coordinate.
+
+Function 6 showed that surrogate predictions could be unreliable locally. Several model-led moves failed before a simpler single-coordinate change produced a new best result.
+
+Functions 7 and 8 responded well to continued local directional refinement.
+
+Function 1 was difficult to model because its outputs were extremely small and spanned several orders of magnitude. The final round nevertheless produced a new best result after testing the opposite side of a previously unsuccessful local move.
 
 ## Key lessons
 
@@ -60,7 +72,8 @@ Several lessons emerged from the project:
 - Direct observations were especially important in sharp or irregular local regions.
 - High-dimensional functions often became effectively low-dimensional near their best-known regions.
 - Smaller local changes were often more effective than broad exploration late in the optimisation process.
-- Model disagreement and failed predictions were useful information and should influence the next decision.
+- Model disagreement and failed predictions were useful information and influenced later decisions.
+- Surrogate models were most useful as decision-support tools rather than authoritative descriptions of the hidden functions.
 
 ## Non-technical summary
 
@@ -68,17 +81,17 @@ This project explored how to optimise eight unknown mathematical functions when 
 
 ## Repository contents
 
-- `README.md` — project overview, methodology and final results.
-- `DATASHEET.md` — description of the optimisation data and its limitations.
-- `MODEL_CARD.md` — description of the surrogate modelling and decision framework.
-- `notebooks/Imperial_BBO_Capstone_Final.ipynb` — final project notebook.
-- `results/` — final queries and result summary.
-- `presentation/` — final capstone presentation.
+- [`Imperial_BBO_Capstone.ipynb`](Imperial_BBO_Capstone.ipynb) — complete optimisation notebook, including the final Round 13 results.
+- [`FINAL_RESULTS.md`](FINAL_RESULTS.md) — summary of the final queries, outputs and best observed results.
+- [`DATASHEET.md`](DATASHEET.md) — description of the optimisation dataset, collection process, characteristics and limitations.
+- [`MODEL_CARD.md`](MODEL_CARD.md) — description of the adaptive surrogate modelling and query-selection framework.
 
 ## Project documentation
 
 - [Dataset Datasheet](DATASHEET.md)
 - [Optimisation Model Card](MODEL_CARD.md)
+- [Final Results](FINAL_RESULTS.md)
+- [Final BBO Notebook](Imperial_BBO_Capstone.ipynb)
 
 ## Tools and libraries
 
@@ -87,13 +100,43 @@ The project was developed in Google Colab using Python.
 Main libraries included:
 
 - NumPy
-- SciPy
 - pandas
+- SciPy
 - scikit-learn
 - matplotlib
 
+The optimisation workflow used methods including:
+
+- Gaussian Process regression;
+- Radial Basis Function interpolation;
+- Extra Trees regression;
+- local quadratic modelling;
+- Bayesian optimisation;
+- Sobol candidate generation;
+- trust-region refinement;
+- sparse-coordinate perturbations;
+- directional continuation;
+- one-dimensional refinement;
+- micro-searches in sharp local regions.
+
 ## Reproducibility
 
-The notebook records the optimisation history, returned observations, model diagnostics and query-generation process used throughout the capstone.
+The notebook records the optimisation history, returned observations, model diagnostics, candidate-generation methods and query-selection process used throughout the capstone.
 
-Because the objective functions were accessed through the course portal, the hidden black-box functions themselves are not included in this repository. The recorded inputs and returned outputs document the observable optimisation process.
+The underlying black-box objective functions were accessed through the course portal and are not included in this repository.
+
+The observable optimisation process can nevertheless be reviewed through the stored queries, returned outputs, final notebook and supporting documentation.
+
+Because the data were collected sequentially and adaptively, the observations should not be interpreted as an independent random sample of the full search spaces.
+
+## Limitations
+
+The project had a limited evaluation budget and relatively small datasets for all eight functions.
+
+Later observations were intentionally concentrated around promising regions, creating adaptive sampling bias.
+
+The mathematical form of the objective functions remained hidden, so the project cannot establish that the global optimum of any function was found.
+
+Local model performance also varied substantially between functions, especially in sharp or irregular regions.
+
+For these reasons, the final results should be interpreted as the best observed solutions found during the capstone rather than mathematically proven global optima.
